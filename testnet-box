@@ -1,18 +1,36 @@
-tnb-cmds = (init clean)
-btc-cmds = (start stop getnewaddress getinfo listtransactions sendtoaddress etc)
+#!/usr/bin/env python
 
+VERSION = "0.1"
 
-init (n >= 2) :
+def init(n):
+	"""
+	init (n >= 2) :
 	for n:
 		mkdir $n/testnet3
 		cp data-template/testnet3/* $n/testnet3
 		cp data-template/bitcoin.conf $n/bitcoin.conf
 		#do some magic on $n/bitcoin.conf
 			#replace ports
+	"""
+	return
+
+def clean(n):
+	"""
+	clean (n=id or n=null/ALL):
+		for n:
+			rm -rf $n/
+
+		init()
+	"""
+	return
 
 
-clean (n=id or n=null/ALL):
-	for n:
-		rm -rf $n/
+def main():
+	print ("TESTNET-BOX v%s" % VERSION)
 
-	init
+
+
+	pass
+
+if __name__ == "__main__":
+    main()
