@@ -11,9 +11,21 @@ def init(n):
     for n:
         mkdir $n/testnet3
         cp data-template/testnet3/* $n/testnet3
-        cp data-template/bitcoin.conf $n/bitcoin.conf
+
+        raw = load('data-template/bitcoin.conf')
         #do some magic on $n/bitcoin.conf
-        #replace ports
+        port=( "19%s" % pad(N) )
+        rpcport=( "18%s" % pad(N) )
+        connects = ""
+        for r in range(n-1):
+            connects += ("connect=127.0.0.1:19%s\n" % pad(r) )
+
+        raw.replace("###port###",port)
+        raw.replace("###rpcport###",rpcport)
+        raw.replace("###connects###",connects)
+
+        save(raw,'$n/bitcoin.conf')
+
     """
     return
 
@@ -29,14 +41,55 @@ def clean(n):
 
 def start(n):
     print ("starting: %s boxes" % n)
+    """
+    for n:
+        bitcoin(n,'-deamon',true)
+    """
+    return
+
+def simulate(n):
+    print ("simulating: %s boxes" % n)
+    """
+    address = {}
+    for n:
+        address[n] = bitcoin(n,'getnewaddress')
+
+    while true:
+        boxes = [:n]
+        boxes.shuffle()
+        from = boxes.pop();
+        to = boxes.pop();
+        amount = math.rand()
+        bitcoin(from, ('sendtoaddress %s %s' % address[to],amount) )
+        sleep 30
+    """
+    return
+
+def bitcoin(id,cmd,deamon):
 
     return
 
+def getN(n):
+    """
+    so this will be like pythons range selector
+    one box = 1
+    range boxes = 2:4
+    group = 1,3,5
+    ground and range = 1,4:10,20:29
+
+    """
+    boxes = [1,2,4]
+    start = 1
+    #do we have commas
+
+    #do we have ranges
+
+    return n
 
 def main():
     print ("TESTNET-BOX v%s" % VERSION)
 
-    tnb_cmds = {'init':init,'clean':clean,'start':start}
+    tnb_cmds = {'init':init,'clean':clean,'start':start,'simulate':simulate}
     btc_cmds = ['addmultisigaddress','backupwallet','createrawtransaction','decoderawtransaction','dumpprivkey','encryptwallet',
                 'getaccount','getaccountaddress','getaddressesbyaccount','getbalance','getblock','getblockcount','getblockhash',
                 'getblocktemplate','getconnectioncount','getdifficulty','getgenerate','gethashespersec','getinfo','getmininginfo',
@@ -46,9 +99,11 @@ def main():
                 'sendmany','sendrawtransaction','sendtoaddress','setaccount','setgenerate','settxfee','signmessage',
                 'signrawtransaction','stop','submitblock','validateaddress','verifymessage']
     if sys.argv[1] in tnb_cmds:
-        n = 2
+
+        n = getN(2)
         if len(sys.argv) >= 3:
-            n = sys.argv[2]
+            n = getN(sys.argv[2])
+
         tnb_cmds[sys.argv[1]](n)
     else:
         if sys.argv[1] in btc_cmds:
