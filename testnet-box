@@ -3,7 +3,7 @@
 VERSION = "0.1"
 BITCOIND = "bitcoind"
 
-import sys
+import sys, subprocess
 
 def init(n):
     print ("init: %s boxes" % n)
@@ -43,7 +43,7 @@ def start(n):
     print ("starting: %s boxes" % n)
     """
     for n:
-        bitcoin(n,'-deamon',true)
+        bitcoin(n,'-deamon',True)
     """
     return
 
@@ -54,19 +54,21 @@ def simulate(n):
     for n:
         address[n] = bitcoin(n,'getnewaddress')
 
-    while true:
+    while True:
         boxes = [:n]
         boxes.shuffle()
         from = boxes.pop();
         to = boxes.pop();
         amount = math.rand()
-        bitcoin(from, ('sendtoaddress %s %s' % address[to],amount) )
+        bitcoin(from, ('sendtoaddress %s %s' % (address[to],amount)) )
         sleep 30
     """
     return
 
-def bitcoin(id,cmd,deamon):
-
+def bitcoin(id,cmd,deamon=False):
+    datadir = ("-datadir=/home/wolf/code/bitcoin-testnet-box/%s" % id)
+    call = [BITCOIND,datadir] + cmd
+    subprocess.call(call)
     return
 
 def getN(n):
@@ -107,11 +109,14 @@ def main():
         tnb_cmds[sys.argv[1]](n)
     else:
         if sys.argv[1] in btc_cmds:
-            print "bitcoin command: ", sys.argv[1]
+            #print "bitcoin command: ", sys.argv[1]
+            bitcoin(1,sys.argv[1:])
         else:
-            print "is this an id?", sys.argv[1]
+            #print "is this an id?", sys.argv[1]
             if len(sys.argv) >= 3:
-                print "bitcoin command: ", sys.argv[2]
+                #print "bitcoin command: ", sys.argv[2]
+                bitcoin(sys.argv[1],sys.argv[2:])
+
 
 
     pass
