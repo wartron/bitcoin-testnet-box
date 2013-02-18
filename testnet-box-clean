@@ -1,7 +1,0 @@
-#!/bin/bash
-
-
-git clean -fd 1/testnet3
-git clean -fd 2/testnet3
-git checkout -- 1/testnet3
-git checkout -- 2/testnet3
