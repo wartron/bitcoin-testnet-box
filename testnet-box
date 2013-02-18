@@ -89,7 +89,6 @@ def getN(n):
     return n
 
 def main():
-    print ("TESTNET-BOX v%s" % VERSION)
 
     tnb_cmds = {'init':init,'clean':clean,'start':start,'simulate':simulate}
     btc_cmds = ['addmultisigaddress','backupwallet','createrawtransaction','decoderawtransaction','dumpprivkey','encryptwallet',
@@ -101,6 +100,7 @@ def main():
                 'sendmany','sendrawtransaction','sendtoaddress','setaccount','setgenerate','settxfee','signmessage',
                 'signrawtransaction','stop','submitblock','validateaddress','verifymessage']
     if sys.argv[1] in tnb_cmds:
+        print ("TESTNET-BOX v%s" % VERSION)
 
         n = getN(2)
         if len(sys.argv) >= 3:
