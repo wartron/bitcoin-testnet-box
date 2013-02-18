@@ -2,8 +2,10 @@
 
 VERSION = "0.1"
 BITCOIND = "bitcoind"
+ROOTDIR = "/home/wolf/code/bitcoin-testnet-box"
+SIMULATE_SLEEP = 30
 
-import sys, subprocess
+import sys, subprocess, time, random
 
 def init(n):
     print ("init: %s boxes" % n)
@@ -49,26 +51,36 @@ def start(n):
 
 def simulate(n):
     print ("simulating: %s boxes" % n)
-    """
+    
     address = {}
-    for n:
-        address[n] = bitcoin(n,'getnewaddress')
+    boxes = []
+    for x in range(int(n)):
+        x = x + 1
+        boxes.append(x)
+        address[x] = bitcoin(x,['getnewaddress'],True)
 
+    print address
+
+    
     while True:
-        boxes = [:n]
-        boxes.shuffle()
-        from = boxes.pop();
-        to = boxes.pop();
-        amount = math.rand()
-        bitcoin(from, ('sendtoaddress %s %s' % (address[to],amount)) )
-        sleep 30
-    """
+        allboxes = list(boxes)
+        random.shuffle(allboxes)
+        boxfrom = allboxes.pop();
+        boxto = allboxes.pop();
+        amount = random.random()
+        bitcoin(boxfrom, ['sendtoaddress',address[boxto],str(amount)] )
+        time.sleep(SIMULATE_SLEEP)
+    
     return
 
 def bitcoin(id,cmd,deamon=False):
-    datadir = ("-datadir=/home/wolf/code/bitcoin-testnet-box/%s" % id)
+    datadir = ("-datadir=%s/%s" % (ROOTDIR,id))
     call = [BITCOIND,datadir] + cmd
-    subprocess.call(call)
+    print call
+    if deamon:
+        return subprocess.check_output(call).strip()
+    else:
+        subprocess.call(call)
     return
 
 def getN(n):
@@ -111,7 +123,7 @@ def main():
         if sys.argv[1] in btc_cmds:
             #print "bitcoin command: ", sys.argv[1]
             bitcoin(1,sys.argv[1:])
-        else:
+        else:#else we are assume the first arg is a box selector and the rest are bitcoin
             #print "is this an id?", sys.argv[1]
             if len(sys.argv) >= 3:
                 #print "bitcoin command: ", sys.argv[2]
